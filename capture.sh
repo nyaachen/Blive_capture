@@ -28,14 +28,14 @@ function get_live_status()
 # param1 addr param2 filename
 function record()
 {
-    ffmpeg -thread_queue_size 2048 -f live_flv -i "$1" -c copy -vsync passthrough -xerror -to 1800 -f flv "/home/nyaachen/A_Pi/record/$2"
+    ffmpeg -thread_queue_size 2048 -f live_flv -i "$1" -c copy -vsync passthrough -xerror -to 1800 -f flv "record/$2"
 }
 
 
 # main function of this script
 # Get target room
 
-if test $1 
+if test $1
 then
 	input=$1
 else
@@ -68,7 +68,7 @@ do
 	fi
 done
 
-# done 
+# done
 
 date "+[%Y-%m-%d %H:%M:%S] [INFO] room_id = ${room_id}"
 
@@ -82,19 +82,19 @@ do
     then
         date "+[%Y-%m-%d %H:%M:%S] It is live time! Capture the stream now!"
         #logfile
-        date "+[%Y-%m-%d %H:%M:%S] Room_id ${room_id} , Live status : Yes, Record status : Starting now" >> /home/nyaachen/A_Pi/logfile.txt
+        date "+[%Y-%m-%d %H:%M:%S] Room_id ${room_id} , Live status : Yes, Record status : Starting now" >> logfile.txt
 		# TODO switch from python to curl
-        live_stream=`echo "${room_id}, ${line}" | python /home/nyaachen/A_Pi/get_live_stream.py`
+        live_stream=`echo "${room_id}, ${line}" | python get_live_stream.py`
         filename=`date "+%Y_%m_%d_%H_%M_%S_${room_id}.flv"`
         record ${live_stream} ${filename}
         response=$?
         if [ $response -eq 0 ]
         then
             time=`date "+%Y/%m/%d %H:%M:%S"`
-            echo "${time} Room_id ${room_id} , Record Result: record end normally" >> /home/nyaachen/A_Pi/logfile.txt
+            echo "${time} Room_id ${room_id} , Record Result: record end normally" >> logfile.txt
         else
             time=`date "+%Y/%m/%d %H:%M:%S"`
-            echo "${time} Room_id ${room_id} , Record Result: record end abnormally (line${line})" >> /home/nyaachen/A_Pi/logfile.txt
+            echo "${time} Room_id ${room_id} , Record Result: record end abnormally (line${line})" >> logfile.txt
             #disconnect--change line
             if [ $line -eq 4 ]
             then
